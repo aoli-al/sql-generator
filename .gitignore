@@ -1,4 +1,4 @@
-out.sql
+out*.sql
 target
 Cargo.lock
 .DS_Store

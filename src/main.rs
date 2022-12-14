@@ -13,21 +13,21 @@ use clap::Parser;
 
 use crate::db::DTYPE;
 
-fn process_table<P>(filename: P, rows: i32) -> String 
+fn process_table<P>(in_filename: P, rows: i32, out_filename: P) -> String 
         where P: AsRef<Path>, {
 
     let mut out_file = OpenOptions::new()
         .write(true)
         .append(true)
         .create(true)
-        .open("out.sql")
+        .open(out_filename)
         .unwrap();
     
     
     // random generator
     let mut rng = rand::thread_rng();
     // read from given file
-    if let Ok(lines) = read_lines(filename) {
+    if let Ok(lines) = read_lines(in_filename) {
         let mut first_row = true;
         let mut table = db::Table{name: String::from(""), fields: vec![]};
         // parse the table file
@@ -37,7 +37,7 @@ fn process_table<P>(filename: P, rows: i32) -> String
                     // try to extract table name
                     let re = Regex::new(r"\s*CREATE\s*TABLE\s*(\w+)\s*\(").unwrap();
                     for cap in re.captures_iter(line_.as_str()) {
-                        println!("table_name: {} ", &cap[1]);
+                        // println!("table_name: {} ", &cap[1]);
                         table.name = cap[1].to_string();
                     }
                     first_row = false;
@@ -45,7 +45,7 @@ fn process_table<P>(filename: P, rows: i32) -> String
                     // try to extract field
                     let re = Regex::new(r"\s*(\w+)\s*(\w+)\s*,").unwrap();
                     for cap in re.captures_iter(line_.as_str()) {
-                        println!("name: {} type: {}", &cap[1], &cap[2]);
+                        // println!("name: {} type: {}", &cap[1], &cap[2]);
                         let dtype = DTYPE::from_s((&cap[2]).to_string());
                         if dtype.is_none() {
                             return "invalid data type".to_string()
@@ -75,14 +75,14 @@ fn process_table<P>(filename: P, rows: i32) -> String
                     body.push_str(",");
                 }
                 if table.fields[f_num].dtype == DTYPE::FLOAT {
-                    body.push_str(format!("{}", rng.gen::<i32>()).as_str());
-                } else {
                     body.push_str(format!("{}", rng.gen::<f64>()).as_str());
+                } else {
+                    body.push_str(format!("{}", rng.gen::<i32>()).as_str());
                 }
             }
             body.push_str(");");
-            println!("sql: {} {}", header, body);
-            if let Err(e) = writeln!(out_file, "{} {}", header, body) {
+            // println!("sql: {} {}", header, body);
+            if let Err(e) = writeln!(out_file, "{}{}", header, body) {
                 eprintln!("Couldn't write to file: {}", e);
             }
         }
@@ -104,14 +104,16 @@ where P: AsRef<Path>, {
 #[derive(Parser)]
 struct Cli {
     // The filename of input sql file
-    filename: String,
+    in_filename: String,
     // The number of sql inser query to generate
     row: i32,
+    // The filename of output sql file
+    out_filename: String,
 }
 
 fn main() {
     let args = Cli::parse();
-    let res = process_table(args.filename, args.row);
+    let res = process_table(args.in_filename, args.row, args.out_filename);
     if res == "" {
         println!("sucess!")
     } else {
