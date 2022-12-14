@@ -1,8 +1,8 @@
-# SQL Data Generator
+# SQL Generator
 
 The idea of this project is to quickly generate mock data given the table schema for testing.
 
-The user will provide a sql file with `CREATE TABLE`  sql query, the program will then generate the `INSERT` sql queries with randomized values. 
+The user will provide a sql file with `CREATE TABLE` query, the program will then generate the `INSERT` queries with randomized values. 
 
 The following key types are support:
 - Int
