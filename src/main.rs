@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 mod db;
 
 use std::fs::File;
@@ -7,6 +9,7 @@ use regex::Regex;
 use rand::Rng;
 use std::fs::OpenOptions;
 use std::io::prelude::*;
+use clap::Parser;
 
 use crate::db::DTYPE;
 
@@ -98,8 +101,17 @@ where P: AsRef<Path>, {
 }
 
 
+#[derive(Parser)]
+struct Cli {
+    // The filename of input sql file
+    filename: String,
+    // The number of sql inser query to generate
+    row: i32,
+}
+
 fn main() {
-    let res = process_table("create_table.sql", 10);
+    let args = Cli::parse();
+    let res = process_table(args.filename, args.row);
     if res == "" {
         println!("sucess!")
     } else {
