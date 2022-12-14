@@ -20,7 +20,7 @@ Usage: sql_gen <IN_FILENAME> <ROW> <OUT_FILENAME>
 cargo run --package sql_gen --bin sql_gen create_table_example.sql 10 out_demo.sql
     Finished dev [unoptimized + debuginfo] target(s) in 0.12s
      Running `target/debug/sql_gen create_table_example.sql 10 out_demo.sql`
-sucess!
+success!
 ```
 
 Input `create_table_example.sql`
