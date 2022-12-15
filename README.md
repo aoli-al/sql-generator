@@ -4,7 +4,7 @@ The idea of this project is to quickly generate mock data given the table schema
 
 The user will provide a sql file with `CREATE TABLE` query, the program will then generate the `INSERT` queries with randomized values. 
 
-The following key types are support:
+The following key types are supported:
 - Int
 - Float
 
